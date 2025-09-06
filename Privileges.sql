@@ -39,9 +39,28 @@ WHERE SEC_IsPermanent = 1
                 ON gr.COSGR_UserID = u.COS_ID
             JOIN [dbo].[CacheOrganizationStructure] g
                 ON g.COS_ID = gr.COSGR_GroupID
-            WHERE g.COS_DisplayName = SEC_UserName
+            WHERE g.COS_BPSID = SEC_USERGUID
         )
-      );
+      )
+UNION ALL
+SELECT 
+'SysAdmin' as [Type of privileges],
+IIF(CSC_USERGUID = '{USER}', 'User', 'Group') AS [User/Group],
+CSC_UserName as [Name]
+FROM [dbo].[WFConfigurationSecurities] 
+WHERE [CSC_IsGlobal] = 1 and CSC_LevelID = 1 and 
+(
+    CSC_USERGUID = '{USER}'
+     OR '{USER}' IN (
+            SELECT u.COS_BpsID
+            FROM [dbo].[CacheOrganizationStructure] u
+            JOIN [dbo].[CacheOrganizationStructureGroupRelations] gr
+                ON gr.COSGR_UserID = u.COS_ID
+            JOIN [dbo].[CacheOrganizationStructure] g
+                ON g.COS_ID = gr.COSGR_GroupID
+            WHERE g.COS_BPSID= CSC_USERGUID
+        )
+)
 
 ---------------------------------------------------
 -- Privileges per process
@@ -65,7 +84,7 @@ WHERE (
                 ON gr.COSGR_UserID = u.COS_ID
             JOIN [dbo].[CacheOrganizationStructure] g
                 ON g.COS_ID = gr.COSGR_GroupID
-            WHERE g.COS_DisplayName = SEC_UserName
+            WHERE g.COS_BPSID = SEC_USERGUID
         )
       )
   AND SEC_DEFID IS NOT NULL;
@@ -100,7 +119,7 @@ WHERE (
                 ON gr.COSGR_UserID = u.COS_ID
             JOIN [dbo].[CacheOrganizationStructure] g
                 ON g.COS_ID = gr.COSGR_GroupID
-            WHERE g.COS_DisplayName = SEC_UserName
+            WHERE g.COS_BPSID = SEC_USERGUID
         )
       );
 
@@ -130,6 +149,6 @@ WHERE (
                 ON gr.COSGR_UserID = u.COS_ID
             JOIN [dbo].[CacheOrganizationStructure] g
                 ON g.COS_ID = gr.COSGR_GroupID
-            WHERE g.COS_DisplayName = SEC_UserName
+            WHERE g.COS_BPSID = SEC_USERGUID
         )
       );
