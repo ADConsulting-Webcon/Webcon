@@ -152,3 +152,22 @@ WHERE (
             WHERE g.COS_BPSID = SEC_USERGUID
         )
       );
+
+---------------------------------------------------
+-- User in Group 
+---------------------------------------------------
+          SELECT u.COS_BpsID
+            FROM [dbo].[CacheOrganizationStructure] u
+            JOIN [dbo].[CacheOrganizationStructureGroupRelations] gr
+                ON gr.COSGR_UserID = u.COS_ID
+            JOIN [dbo].[CacheOrganizationStructure] g
+                ON g.COS_ID = gr.COSGR_GroupID
+            WHERE g.COS_BPSID = {COS_BPSID_Group}
+
+          SELECT u.COS_BpsID
+            FROM [dbo].[CacheOrganizationStructure] u
+            JOIN [dbo].[CacheOrganizationStructureGroupRelations] gr
+                ON gr.COSGR_UserID = u.COS_ID
+            JOIN [dbo].[CacheOrganizationStructure] g
+                ON g.COS_ID = gr.COSGR_GroupID
+            WHERE g.COS_DisplayName = {COS_DisplayName_Group}
