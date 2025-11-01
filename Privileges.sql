@@ -8,6 +8,7 @@ SELECT
     u.COS_BPSID       AS Login, 
     u.COS_DisplayName AS Name,
     g.COS_DisplayName AS GroupName,
+    gr.COSGR_TSInsert AS TSInsert,
     IIF(g.COS_AccountType = 4, 'AD', 'BPS') AS Type
 FROM [dbo].[CacheOrganizationStructure] u
 JOIN [dbo].[CacheOrganizationStructureGroupRelations] gr
